@@ -27,6 +27,7 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
+                        sh "terraform --version"
                         sh "terraform init"
                         sh "whoami"
                     }
