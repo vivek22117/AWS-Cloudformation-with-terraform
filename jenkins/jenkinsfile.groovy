@@ -13,6 +13,7 @@ pipeline {
         string(name: 'VPC_NAME', defaultValue: 'vpc-subnet-network-by-vivek', description: 'Name of VPC Created')
         string(name: 'REGION', defaultValue: 'us-east-1', description: 'AWS region specified')
         string(name: 'WORKSPACE', defaultValue: 'development', description: 'worspace to use in Terraform')
+        string(name: 'ROLE_ARN', defaultValue: 'arn:aws:iam::979126654655:role/JenkinsSlaveRoleByTF')
     }
     environment {
         TF_HOME = tool('Terraform')
@@ -38,7 +39,8 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
-                        sh "terraform plan -var 'region=${params.REGION}' -out terraform-role-policy.tfplan; echo \$? > status"
+                        sh "terraform plan -var 'region=${params.REGION}' -var 'role_arn=${params.ROLE_ARN}' \
+                             -out terraform-role-policy.tfplan; echo \$? > status"
                         def exitCode = readFile('status').trim()
                         echo "Terraform Plan Exit Code: ${exitCode}"
                         stash name: "terraform-role-policy-plan", includes: "terraform-role-policy.tfplan"
