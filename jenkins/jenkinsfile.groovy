@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform-0.11.11"
+    }
 
     options {
         preserveStashes(buildCount: 5)
@@ -11,6 +14,7 @@ pipeline {
         string(name: 'WORKSPACE', defaultValue: 'development', description: 'worspace to use in Terraform')
     }
     environment {
+        TF_HOME = tool('terraform-0.11.11')
         TF_IN_AUTOMATION = "true"
         AWS_METADATA_URL = "http://169.254.169.254:80/latest"
         AWS_METADATA_TIMEOUT = "2s"
