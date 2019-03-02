@@ -28,38 +28,38 @@ pipeline {
                 }
             }
         }
-    }
-    stage('role-&-policy-plan') {
-        steps {
-            dir('IncidetResponse-with-Lambda/access/') {
-                script {
-                    try {
-                        sh "terraform workspace new ${param.WORKSPACE}"
-                    } catch (err){
-                        sh "terraform workspace select ${param.WORKSPACE}"
-                    }
-                    sh "terraform plan -var 'region=${param.REGION}' -out terraform-role-policy.tfplan;echo \$? > status"
-                    stash name: "terraform-role-policy-plan", includes: "terraform-role-policy.tfplan"
-                }
-            }
-        }
-        stage('role-&-policy-apply') {
+        stage('role-&-policy-plan') {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
-                        def apply = false
-
                         try {
-                            input message: 'confirm apply', ok: 'Apply config'
-                            apply = true;
+                            sh "terraform workspace new ${param.WORKSPACE}"
                         } catch (err) {
-                            apply = false
-                            sh "terraform destroy -var 'region=${param.REGION}' -force"
-                            currentBuild.result = 'UNSTABLE'
+                            sh "terraform workspace select ${param.WORKSPACE}"
                         }
-                        if(apply){
-                            unstash "terraform-role-policy-plan"
-                            sh "terraform apply terraform-role-policy.tfplan"
+                        sh "terraform plan -var 'region=${param.REGION}' -out terraform-role-policy.tfplan;echo \$? > status"
+                        stash name: "terraform-role-policy-plan", includes: "terraform-role-policy.tfplan"
+                    }
+                }
+            }
+            stage('role-&-policy-apply') {
+                steps {
+                    dir('IncidetResponse-with-Lambda/access/') {
+                        script {
+                            def apply = false
+
+                            try {
+                                input message: 'confirm apply', ok: 'Apply config'
+                                apply = true;
+                            } catch (err) {
+                                apply = false
+                                sh "terraform destroy -var 'region=${param.REGION}' -force"
+                                currentBuild.result = 'UNSTABLE'
+                            }
+                            if (apply) {
+                                unstash "terraform-role-policy-plan"
+                                sh "terraform apply terraform-role-policy.tfplan"
+                            }
                         }
                     }
                 }
