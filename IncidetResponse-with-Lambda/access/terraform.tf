@@ -10,8 +10,6 @@ terraform {
 provider "aws" {
   assume_role {
     role_arn     = "${var.role_arn}"
-    session_name = "SESSION_FOR_LAMBDA"
-    external_id  = "EXTERNAL_ID_11"
   }
 
   region = "${var.region}"
