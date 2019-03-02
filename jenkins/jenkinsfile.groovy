@@ -28,6 +28,8 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
+                        sh "python"
+                        sh "which python"
                         sh "terraform --version"
                         sh "terraform init"
                         sh "whoami"
