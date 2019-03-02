@@ -10,11 +10,10 @@ which python3
 pip3 install --user virtualenv
 pwd
 cd ../../
-mkdir venv
 cd venv
 pwd
 
-source /home/ec2-user/.local/lib/python3.7/bin/activate
+source /home/ec2-user/venv/python3/bin/activate
 which python
 pip3 install boto3
 
