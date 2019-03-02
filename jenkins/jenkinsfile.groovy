@@ -38,12 +38,9 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
-                        try {
-                            sh "terraform workspace new ${param.WORKSPACE}"
-                        } catch (err) {
-                            sh "terraform workspace select ${param.WORKSPACE}"
-                        }
-                        sh "terraform plan -var 'region=${param.REGION}' -out terraform-role-policy.tfplan;echo \$? > status"
+                        sh "terraform plan -var 'region=${param.REGION}' -out terraform-role-policy.tfplan; echo \$? > status"
+                        def exitCode = readFile('status').trim()
+                        echo "Terraform Plan Exit Code: ${exitCode}"
                         stash name: "terraform-role-policy-plan", includes: "terraform-role-policy.tfplan"
                     }
                 }
