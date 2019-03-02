@@ -9,6 +9,7 @@ sudo yum install python3 -y
 which python3
 pip3 install --user virtualenv
 pwd
+cd ../../
 mkdir venv
 cd venv
 pwd
