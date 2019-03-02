@@ -26,22 +26,7 @@ pipeline {
     stages {
         stage('update-instance') {
             steps {
-                bash '''#!/bin/bash
-                        echo "hello world" 
-                        sudo yum update
-                        python --version
-                        sudo yum install python3 -y
-                        which python3
-                        pip3 install --user virtualenv
-                        pwd
-                        mkdir venv
-                        cd venv
-                        pwd
-                        virtualenv -p /usr/bin/python3 python3
-                        source /home/ec2-user/venv/python3/bin/activate
-                        which python
-                        pip3 install boto3
-                    '''
+              sh "./update_ec2.sh"
             }
         }
         stage('role-&-policy-Init') {
