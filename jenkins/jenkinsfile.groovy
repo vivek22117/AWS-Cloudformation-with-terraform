@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        terraform "terraform-1.0.9"
+        org.jenkinsci.plugins.terraform.TerraformInstallation "terraform-1.0.9"
     }
 
     options {
