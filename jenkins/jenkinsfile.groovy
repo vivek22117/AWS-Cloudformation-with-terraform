@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     options {
-        timestamps()
+        preserveStashes(buildCount: 5)
+        skipStagesAfterUnstable()
     }
     parameters {
         string(name: 'VPC_NAME', defaultValue: 'vpc-subnet-network-by-vivek', description: 'Name of VPC Created')
