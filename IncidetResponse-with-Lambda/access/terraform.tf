@@ -7,10 +7,20 @@ terraform {
   }
 }
 
-provider "aws" {
-  assume_role {
-    role_arn     = "${var.role_arn}"
-  }
+data "external" "aws_assume_role" {
+  program = ["python3", "terraform_aws_assume_role.py"]
 
-  region = "${var.region}"
+  query {
+    role_arn = "${var.role_arn}"
+    wait     = 10
+  }
+}
+
+provider "aws" {
+  alias = "iamrole"
+
+  access_key = "${data.external.aws_assume_role.result["access_key"]}"
+  secret_key = "${data.external.aws_assume_role.result["secret_key"]}"
+  token      = "${data.external.aws_assume_role.result["token"]}"
+  region     = "${var.region}"
 }
