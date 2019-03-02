@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform-1.0.9"
-    }
-
     options {
         preserveStashes(buildCount: 5)
         skipStagesAfterUnstable()
