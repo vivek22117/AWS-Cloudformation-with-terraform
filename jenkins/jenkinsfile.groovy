@@ -26,8 +26,7 @@ pipeline {
     stages {
         stage('update-instance') {
             steps {
-                script {
-                    bash '''#!/bin/bash
+                bash '''#!/bin/bash
                         echo "hello world" 
                         sudo yum update
                         python --version
@@ -43,7 +42,6 @@ pipeline {
                         which python
                         pip3 install boto3
                     '''
-                }
             }
         }
         stage('role-&-policy-Init') {
