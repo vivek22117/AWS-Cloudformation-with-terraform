@@ -13,7 +13,7 @@ pipeline {
         string(name: 'VPC_NAME', defaultValue: 'vpc-subnet-network-by-vivek', description: 'Name of VPC Created')
         string(name: 'REGION', defaultValue: 'us-east-1', description: 'AWS region specified')
         string(name: 'WORKSPACE', defaultValue: 'development', description: 'worspace to use in Terraform')
-        string(name: 'ROLE_ARN', defaultValue: 'arn:aws:iam::979126654655:role/JenkinsSlaveRoleByTF')
+        string(name: 'ROLE_ARN', defaultValue: 'arn:aws:iam::979126654655:instance-profile/JenkinsSlavesAccessByTF')
     }
     environment {
         TF_HOME = tool('Terraform')
