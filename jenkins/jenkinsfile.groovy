@@ -11,9 +11,7 @@ pipeline {
         string(name: 'WORKSPACE', defaultValue: 'development', description: 'worspace to use in Terraform')
     }
     environment {
-        TF_HOME = tool('terraform-1.0.9')
         TF_IN_AUTOMATION = "true"
-        PATH = "$TF_HOME:$PATH"
         AWS_METADATA_URL = "http://169.254.169.254:80/latest"
         AWS_METADATA_TIMEOUT = "2s"
     }
