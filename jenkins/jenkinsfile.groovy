@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        "com.cloudbees.jenkins.plugins.customtools.CustomTool" "Terraform"
+    }
+
     options {
         preserveStashes(buildCount: 5)
         skipStagesAfterUnstable()
@@ -11,7 +15,9 @@ pipeline {
         string(name: 'WORKSPACE', defaultValue: 'development', description: 'worspace to use in Terraform')
     }
     environment {
+        TF_HOME = tool('Terraform')
         TF_IN_AUTOMATION = "true"
+        PATH = "$TF_HOME:$PATH"
         AWS_METADATA_URL = "http://169.254.169.254:80/latest"
         AWS_METADATA_TIMEOUT = "2s"
     }
