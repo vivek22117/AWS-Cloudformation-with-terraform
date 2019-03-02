@@ -14,8 +14,7 @@ mkdir venv
 cd venv
 pwd
 
-virtualenv -p /usr/bin/python3 python3
-source /home/ec2-user/venv/python3/bin/activate
+source /home/ec2-user/.local/lib/python3.7/bin/activate
 which python
 pip3 install boto3
 
