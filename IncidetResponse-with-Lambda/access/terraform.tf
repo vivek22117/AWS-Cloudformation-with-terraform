@@ -8,7 +8,7 @@ terraform {
 }
 
 data "external" "aws_assume_role" {
-  program = ["python3", "terraform_aws_assume_role.py"]
+  program = ["python", "terraform_aws_assume_role.py"]
 
   query {
     role_arn = "${var.role_arn}"
