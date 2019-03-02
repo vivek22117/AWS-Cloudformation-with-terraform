@@ -56,7 +56,7 @@ def assume_role():
     try:
         response = sts.assume_role(RoleArn=query["role_arn"], RoleSessionName=os.path.basename(sys.argv[0]))
     except botocore.exceptions.ClientError as e:
-        error(f"Error from AWS API: {e.response['Error']['Message']}")
+        error("Error from AWS API: {e.response['Error']['Message']}")
 
     sys.stdout.write(json.dumps({
         "access_key": response["Credentials"]["AccessKeyId"],
