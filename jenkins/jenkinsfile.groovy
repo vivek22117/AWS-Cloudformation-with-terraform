@@ -26,9 +26,7 @@ pipeline {
     stages {
         stage('update-instance') {
             steps {
-                dir('IncidetResponse-with-Lambda/access/') {
-                    sh "./update_ec2.sh"
-                }
+                sh "./update_ec2.sh"
             }
         }
         stage('role-&-policy-Init') {
