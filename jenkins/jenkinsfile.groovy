@@ -26,6 +26,7 @@ pipeline {
     stages {
         stage('update-instance') {
             steps {
+                sh "chmod 777 update_ec2.sh"
                 sh "./update_ec2.sh"
             }
         }
