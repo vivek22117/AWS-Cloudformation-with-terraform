@@ -19,7 +19,7 @@ resource "aws_iam_role" "role" {
                     "lambda.amazonaws.com"
                 ]
             },
-            "Effect": "Allow",
+            "Effect": "Allow"
         }
     ]
 }
