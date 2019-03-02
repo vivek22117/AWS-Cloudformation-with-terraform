@@ -38,7 +38,7 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
-                        sh "terraform plan -var 'region=${param.REGION}' -out terraform-role-policy.tfplan; echo \$? > status"
+                        sh "terraform plan -var 'region=${params.REGION}' -out terraform-role-policy.tfplan; echo \$? > status"
                         def exitCode = readFile('status').trim()
                         echo "Terraform Plan Exit Code: ${exitCode}"
                         stash name: "terraform-role-policy-plan", includes: "terraform-role-policy.tfplan"
@@ -57,7 +57,7 @@ pipeline {
                             apply = true;
                         } catch (err) {
                             apply = false
-                            sh "terraform destroy -var 'region=${param.REGION}' -force"
+                            sh "terraform destroy -var 'region=${params.REGION}' -force"
                             currentBuild.result = 'UNSTABLE'
                         }
                         if (apply) {
