@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform-0.11.11"
+        terraform "terraform-1.0.9"
     }
 
     options {
@@ -15,7 +15,7 @@ pipeline {
         string(name: 'WORKSPACE', defaultValue: 'development', description: 'worspace to use in Terraform')
     }
     environment {
-        TF_HOME = tool('terraform-0.11.11')
+        TF_HOME = tool('terraform-1.0.9')
         TF_IN_AUTOMATION = "true"
         PATH = "$TF_HOME:$PATH"
         AWS_METADATA_URL = "http://169.254.169.254:80/latest"
