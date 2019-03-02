@@ -42,24 +42,24 @@ pipeline {
                     }
                 }
             }
-            stage('role-&-policy-apply') {
-                steps {
-                    dir('IncidetResponse-with-Lambda/access/') {
-                        script {
-                            def apply = false
+        }
+        stage('role-&-policy-apply') {
+            steps {
+                dir('IncidetResponse-with-Lambda/access/') {
+                    script {
+                        def apply = false
 
-                            try {
-                                input message: 'confirm apply', ok: 'Apply config'
-                                apply = true;
-                            } catch (err) {
-                                apply = false
-                                sh "terraform destroy -var 'region=${param.REGION}' -force"
-                                currentBuild.result = 'UNSTABLE'
-                            }
-                            if (apply) {
-                                unstash "terraform-role-policy-plan"
-                                sh "terraform apply terraform-role-policy.tfplan"
-                            }
+                        try {
+                            input message: 'confirm apply', ok: 'Apply config'
+                            apply = true;
+                        } catch (err) {
+                            apply = false
+                            sh "terraform destroy -var 'region=${param.REGION}' -force"
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                        if (apply) {
+                            unstash "terraform-role-policy-plan"
+                            sh "terraform apply terraform-role-policy.tfplan"
                         }
                     }
                 }
