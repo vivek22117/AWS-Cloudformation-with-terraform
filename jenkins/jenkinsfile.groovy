@@ -52,7 +52,6 @@ pipeline {
                     script {
                         sh "python"
                         sh "which python"
-                        sh "sudo pip install boto3"
                         sh "terraform --version"
                         sh "terraform init"
                         sh "whoami"
