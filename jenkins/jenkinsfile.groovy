@@ -14,6 +14,7 @@ pipeline {
         string(name: 'REGION', defaultValue: 'us-east-1', description: 'AWS region specified')
         string(name: 'WORKSPACE', defaultValue: 'development', description: 'worspace to use in Terraform')
         string(name: 'ROLE_ARN', defaultValue: 'arn:aws:iam::979126654655:role/JenkinsSlaveRoleByTF')
+        string(name: 'AWS_ACCESS_KEY_ID', defaultValue: '')
     }
     environment {
         TF_HOME = tool('Terraform')
@@ -27,10 +28,11 @@ pipeline {
         stage('update-instance') {
             steps {
                 script {
-                    def status = null
-                    status = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                    def temporary_credentials = null
+                    temporary_credentials = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
                              --output table", returnStdout: true)
-                    echo status
+                    AWS_ACCESS_KEY_ID = echo "${temporary_credentials}" | jq -re '.Credentials.AccessKeyId'
+                    echo AWS_ACCESS_KEY_ID
                 }
             }
         }
