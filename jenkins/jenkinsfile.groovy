@@ -26,9 +26,12 @@ pipeline {
     stages {
         stage('update-instance') {
             steps {
-                status = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                script {
+                    def status = null
+                    status = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
                              --output text", returnStdout: true)
-                echo status
+                    echo status
+                }
             }
         }
         stage('role-&-policy-Init') {
