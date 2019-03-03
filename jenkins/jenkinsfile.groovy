@@ -31,7 +31,7 @@ pipeline {
                     def temporary_credentials = null
                     temporary_credentials = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
                              --output table", returnStdout: true)
-                    AWS_ACCESS_KEY_ID = echo "${temporary_credentials}" | jq -re '.Credentials.AccessKeyId'
+                    AWS_ACCESS_KEY_ID = echo 'temporary_credentials[*].Credentials.AccessKeyId'
                     echo AWS_ACCESS_KEY_ID
                 }
             }
