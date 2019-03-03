@@ -127,6 +127,22 @@ resource "aws_iam_role_policy" "s3_policy" {
       ],
       "Effect": "Allow",
       "Resource": "arn:aws:s3:::double-digit-*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudtrail:*"
+      ],
+      "Resource": "*"
     }
   ]
 }

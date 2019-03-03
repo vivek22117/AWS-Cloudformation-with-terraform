@@ -27,7 +27,7 @@ pipeline {
     }
 
     stages {
-        stage('update-instance') {
+        stage('provide-credentials') {
             steps {
                 script {
                     def access_key_id = null
