@@ -29,9 +29,9 @@ pipeline {
             steps {
                 script {
                     def temporary_credentials = null
-                    AWS_ACCESS_KEY_ID = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
-                             --query 'Credentials[*].AccessKeyId' --output text", returnStdout: true)
-                    echo AWS_ACCESS_KEY_ID
+                    temporary_credentials = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                             --query 'Credentials[].AccessKeyId' --output text", returnStdout: true)
+                    echo temporary_credentials
                 }
             }
         }
