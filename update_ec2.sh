@@ -8,11 +8,8 @@ sudo yum install python3 -y
 
 which python3
 pip3 install --user virtualenv
-pwd
-cd ../../
-cd venv
-pwd
 
+virtualenv -p /usr/bin/python3 python3
 source /home/ec2-user/venv/python3/bin/activate
 which python
 pip3 install boto3

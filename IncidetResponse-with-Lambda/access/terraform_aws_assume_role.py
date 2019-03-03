@@ -7,7 +7,7 @@ import select
 import sys
 from time import sleep
 
-import boto
+import boto3
 import botocore.exceptions
 
 
