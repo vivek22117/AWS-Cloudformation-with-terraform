@@ -17,7 +17,7 @@ pipeline {
         string(name: 'AWS_ACCESS_KEY_ID', defaultValue: '')
         string(name: 'SECRET_ACCESS_KEY', defaultValue: '')
         string(name: 'SESSION_TOKEN', defaultValue: '')
-        booleanParam(name: 'DESTROY', defaultValue: true, description: "flag to destroy aws infra")
+        booleanParam(name: 'DESTROY', defaultValue: 'true')
     }
     environment {
         TF_HOME = tool('Terraform')
@@ -31,22 +31,18 @@ pipeline {
         stage('provide-credentials') {
             steps {
                 script {
-                    def destroy = ${params.DESTORY}
-                    if (!destroy) {
-                        def access_key_id = null
-                        def secret_access_key = null
-                        def session_token = null
-                        access_key_id = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                    def access_key_id = null
+                    def secret_access_key = null
+                    def session_token = null
+                    access_key_id = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
                              --query 'Credentials.AccessKeyId' ", returnStdout: true)
-                        secret_access_key = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                    secret_access_key = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
                              --query 'Credentials.SecretAccessKey' ", returnStdout: true)
-                        session_token = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                    session_token = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
                              --query 'Credentials.SessionToken' ", returnStdout: true)
-                        $AWS_ACCESS_KEY_ID = access_key_id
-                        $SECRET_ACCESS_KEY = secret_access_key
-                        $SESSION_TOKEN = session_token
-                    }
-                    sh "terraform destroy -auto-approve -var 'region=${params.REGION}' -force"
+                    $AWS_ACCESS_KEY_ID = access_key_id
+                    $SECRET_ACCESS_KEY = secret_access_key
+                    $SESSION_TOKEN = session_token
                 }
             }
         }
@@ -54,11 +50,9 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
-                        if (!$ { params.DESTORY }) {
-                            sh "terraform --version"
-                            sh "terraform init"
-                            sh "whoami"
-                        }
+                        sh "terraform --version"
+                        sh "terraform init"
+                        sh "whoami"
                     }
                 }
             }
@@ -67,16 +61,14 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
-                        if (!$ { params.DESTORY }) {
-                            echo $AWS_ACCESS_KEY_ID
-                            echo $SECRET_ACCESS_KEY
-                            sh "terraform plan -var 'region=${params.REGION}' -var 'role_arn=${params.ROLE_ARN}' \
+                        echo $AWS_ACCESS_KEY_ID
+                        echo $SECRET_ACCESS_KEY
+                        sh "terraform plan -var 'region=${params.REGION}' -var 'role_arn=${params.ROLE_ARN}' \
                              -var 'access_key_id=$AWS_ACCESS_KEY_ID' -var 'secret_access_key=$SECRET_ACCESS_KEY' \
                              -var 'session_token=$SESSION_TOKEN' -out terraform-role-policy.tfplan; echo \$? > status"
-                            def exitCode = readFile('status').trim()
-                            echo "Terraform Plan Exit Code: ${exitCode}"
-                            stash name: "terraform-role-policy-plan", includes: "terraform-role-policy.tfplan"
-                        }
+                        def exitCode = readFile('status').trim()
+                        echo "Terraform Plan Exit Code: ${exitCode}"
+                        stash name: "terraform-role-policy-plan", includes: "terraform-role-policy.tfplan"
                     }
                 }
             }
@@ -85,20 +77,18 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
-                        if (!$ { params.DESTORY }) {
-                            def apply = false
-                            try {
-                                input message: 'confirm apply', ok: 'Apply config'
-                                apply = true;
-                            } catch (err) {
-                                apply = false
-                                sh "terraform destroy -var 'region=${params.REGION}' -force"
-                                currentBuild.result = 'UNSTABLE'
-                            }
-                            if (apply) {
-                                unstash "terraform-role-policy-plan"
-                                sh "terraform apply terraform-role-policy.tfplan"
-                            }
+                        def apply = false
+                        try {
+                            input message: 'confirm apply', ok: 'Apply config'
+                            apply = true;
+                        } catch (err) {
+                            apply = false
+                            sh "terraform destroy -var 'region=${params.REGION}' -force"
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                        if (apply) {
+                            unstash "terraform-role-policy-plan"
+                            sh "terraform apply terraform-role-policy.tfplan"
                         }
                     }
                 }
