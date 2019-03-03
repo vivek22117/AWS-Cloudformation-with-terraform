@@ -31,7 +31,8 @@ pipeline {
         stage('provide-credentials') {
             steps {
                 script {
-                    if (!${params.DESTORY}) {
+                    def destroy = ${params.DESTORY}
+                    if (!destroy) {
                         def access_key_id = null
                         def secret_access_key = null
                         def session_token = null
