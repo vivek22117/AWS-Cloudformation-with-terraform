@@ -31,7 +31,7 @@ pipeline {
         stage('provide-credentials') {
             steps {
                 script {
-                    if (!$DESTORY) {
+                    if (!${params.DESTORY}) {
                         def access_key_id = null
                         def secret_access_key = null
                         def session_token = null
