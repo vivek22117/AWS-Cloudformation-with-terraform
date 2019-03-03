@@ -83,8 +83,9 @@ pipeline {
                             apply = true;
                         } catch (err) {
                             apply = false
-                            sh "terraform destroy -var 'region=${params.REGION}' -force"
-                            currentBuild.result = 'UNSTABLE'
+                            sh "terraform destroy -var 'region=${params.REGION}' -var 'role_arn=${params.ROLE_ARN}' \
+                             -var 'access_key_id=$AWS_ACCESS_KEY_ID' -var 'secret_access_key=$SECRET_ACCESS_KEY' \
+                             -var 'session_token=$SESSION_TOKEN' -force"
                         }
                         if (apply) {
                             unstash "terraform-role-policy-plan"
