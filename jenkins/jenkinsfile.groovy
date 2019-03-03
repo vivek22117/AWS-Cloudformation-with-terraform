@@ -60,6 +60,8 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
+                        echo $AWS_ACCESS_KEY_ID
+                        echo $SECRET_ACCESS_KEY
                         sh "terraform plan -var 'region=${params.REGION}' -var 'role_arn=${params.ROLE_ARN}' \
                              -var 'access_key_id=${params.AWS_ACCESS_KEY_ID}' -var 'access_key_id=${params.SECRET_ACCESS_KEY}' \
                              -var 'access_key_id=${params.SESSION_TOKEN}' -out terraform-role-policy.tfplan; echo \$? > status"
