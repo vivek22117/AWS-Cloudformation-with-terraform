@@ -15,6 +15,8 @@ pipeline {
         string(name: 'WORKSPACE', defaultValue: 'development', description: 'worspace to use in Terraform')
         string(name: 'ROLE_ARN', defaultValue: 'arn:aws:iam::979126654655:role/JenkinsSlaveRoleByTF')
         string(name: 'AWS_ACCESS_KEY_ID', defaultValue: '')
+        string(name: 'SECRET_ACCESS_KEY', defaultValue: '')
+        string(name: 'SESSION_TOKEN', defaultValue: '')
     }
     environment {
         TF_HOME = tool('Terraform')
@@ -28,11 +30,18 @@ pipeline {
         stage('update-instance') {
             steps {
                 script {
-                    def temporary_credentials = null
-                    temporary_credentials = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                    def access_key_id = null
+                    def secret_access_key = null
+                    def session_token = null
+                    access_key_id = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
                              --query 'Credentials.AccessKeyId' ", returnStdout: true)
-                    $AWS_ACCESS_KEY_ID = temporary_credentials
-                    echo $AWS_ACCESS_KEY_ID
+                    secret_access_key = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                             --query 'Credentials.SecretAccessKey' ", returnStdout: true)
+                    session_token = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                             --query 'Credentials.SessionToken' ", returnStdout: true)
+                    $AWS_ACCESS_KEY_ID = access_key_id
+                    $SECRET_ACCESS_KEY = secret_access_key
+                    $SESSION_TOKEN = session_token
                 }
             }
         }
@@ -40,9 +49,6 @@ pipeline {
             steps {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
-                        sh "python"
-                        sh "which python"
-                        sh "python -m pip install --user boto3"
                         sh "terraform --version"
                         sh "terraform init"
                         sh "whoami"
@@ -55,7 +61,8 @@ pipeline {
                 dir('IncidetResponse-with-Lambda/access/') {
                     script {
                         sh "terraform plan -var 'region=${params.REGION}' -var 'role_arn=${params.ROLE_ARN}' \
-                             -out terraform-role-policy.tfplan; echo \$? > status"
+                             -var 'access_key_id=${params.AWS_ACCESS_KEY_ID}' -var 'access_key_id=${params.SECRET_ACCESS_KEY}' \
+                             -var 'access_key_id=${params.SESSION_TOKEN}' -out terraform-role-policy.tfplan; echo \$? > status"
                         def exitCode = readFile('status').trim()
                         echo "Terraform Plan Exit Code: ${exitCode}"
                         stash name: "terraform-role-policy-plan", includes: "terraform-role-policy.tfplan"
