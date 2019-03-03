@@ -63,8 +63,8 @@ pipeline {
                         echo $AWS_ACCESS_KEY_ID
                         echo $SECRET_ACCESS_KEY
                         sh "terraform plan -var 'region=${params.REGION}' -var 'role_arn=${params.ROLE_ARN}' \
-                             -var 'access_key_id=${AWS_ACCESS_KEY_ID}' -var 'access_key_id=$SECRET_ACCESS_KEY' \
-                             -var 'access_key_id=$SESSION_TOKEN' -out terraform-role-policy.tfplan; echo \$? > status"
+                             -var 'access_key_id=$AWS_ACCESS_KEY_ID' -var 'secret_access_key=$SECRET_ACCESS_KEY' \
+                             -var 'session_token=$SESSION_TOKEN' -out terraform-role-policy.tfplan; echo \$? > status"
                         def exitCode = readFile('status').trim()
                         echo "Terraform Plan Exit Code: ${exitCode}"
                         stash name: "terraform-role-policy-plan", includes: "terraform-role-policy.tfplan"
