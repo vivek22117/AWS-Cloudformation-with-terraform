@@ -26,7 +26,9 @@ pipeline {
     stages {
         stage('update-instance') {
             steps {
-                sh "./update_ec2.sh"
+                status = sh(script: "aws sts assume-role --role-arn ${params.ROLE_ARN} --role-session-name 'dd-sts-session' \
+                             --output text", returnStdout: true)
+                echo status
             }
         }
         stage('role-&-policy-Init') {
